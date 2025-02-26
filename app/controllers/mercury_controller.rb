@@ -2,11 +2,19 @@ class MercuryController < ActionController::Base
   include ::Mercury::Authentication
 
   protect_from_forgery
-  before_filter :authenticate, :only => :edit
   layout false
+  if Rails::VERSION::MAJOR <= 4
+    before_filter :authenticate, :only => :edit
+  else
+    before_action :authenticate, :only => :edit
+  end
 
   def edit
-    render :text => '', :layout => 'mercury'
+    if Rails::VERSION::MAJOR <= 4
+      render :text => '', :layout => 'mercury'
+    else
+      render :html => '', :layout => 'mercury'
+    end
   end
 
   def resource
@@ -23,7 +31,7 @@ class MercuryController < ActionController::Base
   end
 
   def test_page
-    render :text => params
+    render plain: params
   end
 
   private
